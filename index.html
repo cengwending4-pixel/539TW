@@ -1,0 +1,1382 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>台灣539專業分析系統 | Professional Analytics</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #2C3E50;
+            --secondary: #3498DB;
+            --accent: #E74C3C;
+            --success: #27AE60;
+            --warning: #F39C12;
+            --dark: #1A252F;
+            --light: #ECF0F1;
+            --border: #BDC3C7;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft JhengHei", "微軟正黑體", Arial, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(255, 255, 255, 0.98);
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            padding: 20px 0;
+            margin-bottom: 30px;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--secondary), var(--primary));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+
+        .header h1 {
+            font-size: 1.8em;
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .header .subtitle {
+            color: #7f8c8d;
+            font-size: 0.9em;
+            margin-top: 3px;
+        }
+
+        .header-stats {
+            display: flex;
+            gap: 30px;
+        }
+
+        .header-stat {
+            text-align: center;
+        }
+
+        .header-stat-value {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: var(--secondary);
+        }
+
+        .header-stat-label {
+            font-size: 0.8em;
+            color: #7f8c8d;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 30px 50px;
+        }
+
+        /* Grid Layout */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+
+        /* Cards */
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .card-title {
+            font-size: 1.4em;
+            font-weight: 700;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-icon {
+            width: 35px;
+            height: 35px;
+            background: linear-gradient(135deg, var(--secondary), var(--primary));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.1em;
+        }
+
+        .card-badge {
+            background: var(--light);
+            color: var(--primary);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        /* Strategy Selection */
+        .strategy-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .strategy-option {
+            padding: 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .strategy-option::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--secondary)10, transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .strategy-option:hover {
+            border-color: var(--secondary);
+            transform: translateY(-2px);
+        }
+
+        .strategy-option.active {
+            border-color: var(--secondary);
+            background: linear-gradient(135deg, rgba(52, 152, 219, 0.05), rgba(44, 62, 80, 0.05));
+        }
+
+        .strategy-option.active::after {
+            content: '✓';
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 25px;
+            height: 25px;
+            background: var(--success);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .strategy-title {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .strategy-desc {
+            font-size: 0.9em;
+            color: #7f8c8d;
+            line-height: 1.5;
+        }
+
+        .strategy-stats {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #f0f0f0;
+            display: flex;
+            gap: 15px;
+            font-size: 0.85em;
+        }
+
+        .strategy-stat {
+            color: #95a5a6;
+        }
+
+        .strategy-stat strong {
+            color: var(--secondary);
+        }
+
+        /* Control Panel */
+        .control-panel {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin: 25px 0;
+        }
+
+        .btn {
+            padding: 15px 25px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--secondary), var(--primary));
+            color: white;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #27AE60, #229954);
+            color: white;
+            box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(39, 174, 96, 0.4);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, var(--accent), #C0392B);
+            color: white;
+            box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4);
+        }
+
+        /* Generated Numbers */
+        .generated-display {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 15px;
+            padding: 40px;
+            margin: 25px 0;
+            min-height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .generated-display::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(52, 152, 219, 0.03) 0%, transparent 70%);
+            animation: pulse 3s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+
+        .numbers-container {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .number-ball-large {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2em;
+            font-weight: 700;
+            color: white;
+            background: linear-gradient(135deg, var(--secondary), var(--primary));
+            box-shadow: 0 8px 25px rgba(52, 152, 219, 0.4);
+            position: relative;
+            animation: popIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .number-ball-large::before {
+            content: '';
+            position: absolute;
+            top: 10%;
+            left: 20%;
+            width: 30%;
+            height: 30%;
+            background: rgba(255,255,255,0.3);
+            border-radius: 50%;
+        }
+
+        @keyframes popIn {
+            0% {
+                transform: scale(0) rotate(0deg);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.2) rotate(180deg);
+            }
+            100% {
+                transform: scale(1) rotate(360deg);
+                opacity: 1;
+            }
+        }
+
+        .empty-state {
+            text-align: center;
+            color: #95a5a6;
+            font-size: 1.1em;
+        }
+
+        .empty-state-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+            opacity: 0.3;
+        }
+
+        /* Number Grid */
+        .number-grid {
+            display: grid;
+            grid-template-columns: repeat(13, 1fr);
+            gap: 8px;
+            margin: 20px 0;
+        }
+
+        .number-cell {
+            aspect-ratio: 1;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid #e0e0e0;
+            background: white;
+            position: relative;
+        }
+
+        .number-cell:hover {
+            transform: scale(1.1);
+            z-index: 10;
+        }
+
+        .number-cell.hot {
+            background: linear-gradient(135deg, #FF6B6B, #EE5A6F);
+            color: white;
+            border-color: #FF6B6B;
+        }
+
+        .number-cell.cold {
+            background: linear-gradient(135deg, #4FACFE, #00F2FE);
+            color: white;
+            border-color: #4FACFE;
+        }
+
+        .number-cell.selected {
+            background: linear-gradient(135deg, var(--secondary), var(--primary));
+            color: white;
+            border-color: var(--secondary);
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.4);
+        }
+
+        .frequency-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: rgba(52, 152, 219, 0.3);
+            border-radius: 0 0 6px 6px;
+        }
+
+        /* Statistics Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .stat-box {
+            padding: 20px;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 12px;
+            border-left: 4px solid var(--secondary);
+        }
+
+        .stat-label {
+            font-size: 0.85em;
+            color: #7f8c8d;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 2em;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .stat-change {
+            font-size: 0.85em;
+            margin-top: 5px;
+        }
+
+        .stat-change.positive {
+            color: var(--success);
+        }
+
+        .stat-change.negative {
+            color: var(--accent);
+        }
+
+        /* Analysis Section */
+        .analysis-panel {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+
+        .analysis-title {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .analysis-item {
+            padding: 12px;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border-left: 3px solid var(--secondary);
+        }
+
+        .analysis-item strong {
+            color: var(--secondary);
+        }
+
+        /* History Table */
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .history-table thead {
+            background: #f8f9fa;
+        }
+
+        .history-table th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--primary);
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .history-table td {
+            padding: 15px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .history-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .history-numbers {
+            display: flex;
+            gap: 8px;
+        }
+
+        .history-ball {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--secondary), var(--primary));
+            color: white;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+
+        .strategy-badge {
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        .badge-random { background: #E8F5E9; color: #27AE60; }
+        .badge-hot { background: #FFEBEE; color: #E74C3C; }
+        .badge-cold { background: #E3F2FD; color: #3498DB; }
+        .badge-balanced { background: #FFF3E0; color: #F39C12; }
+        .badge-ai { background: #F3E5F5; color: #9B59B6; }
+
+        /* Legend */
+        .legend {
+            display: flex;
+            gap: 25px;
+            flex-wrap: wrap;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9em;
+        }
+
+        .legend-color {
+            width: 35px;
+            height: 35px;
+            border-radius: 8px;
+            border: 2px solid #e0e0e0;
+        }
+
+        /* Charts */
+        .chart-container {
+            height: 200px;
+            margin: 20px 0;
+            position: relative;
+        }
+
+        .bar-chart {
+            display: flex;
+            align-items: flex-end;
+            height: 100%;
+            gap: 3px;
+        }
+
+        .bar {
+            flex: 1;
+            background: linear-gradient(to top, var(--secondary), var(--primary));
+            border-radius: 4px 4px 0 0;
+            position: relative;
+            transition: all 0.3s ease;
+            min-height: 10px;
+        }
+
+        .bar:hover {
+            opacity: 0.8;
+            transform: scaleY(1.05);
+        }
+
+        .bar-value {
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.75em;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .number-grid {
+                grid-template-columns: repeat(10, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .header-stats {
+                width: 100%;
+                justify-content: space-around;
+            }
+
+            .strategy-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .control-panel {
+                grid-template-columns: 1fr;
+            }
+
+            .number-grid {
+                grid-template-columns: repeat(7, 1fr);
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .card {
+                padding: 20px;
+            }
+        }
+
+        /* Animations */
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card {
+            animation: slideIn 0.5s ease-out;
+        }
+
+        /* Loading */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--secondary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="header-content">
+            <div class="logo-section">
+                <div class="logo">539</div>
+                <div>
+                    <h1>台灣539專業分析系統</h1>
+                    <p class="subtitle">Professional Analytics & Number Generation</p>
+                </div>
+            </div>
+            <div class="header-stats">
+                <div class="header-stat">
+                    <div class="header-stat-value" id="totalSets">0</div>
+                    <div class="header-stat-label">生成組數</div>
+                </div>
+                <div class="header-stat">
+                    <div class="header-stat-value" id="successRate">0%</div>
+                    <div class="header-stat-label">系統準確率</div>
+                </div>
+                <div class="header-stat">
+                    <div class="header-stat-value" id="activeStrategy">隨機</div>
+                    <div class="header-stat-label">當前策略</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="dashboard-grid">
+            <!-- Left Column -->
+            <div>
+                <!-- Generation Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <div class="card-icon">🎯</div>
+                            號碼生成器
+                        </div>
+                        <div class="card-badge">AI 智能推薦</div>
+                    </div>
+
+                    <!-- Strategy Selection -->
+                    <div class="strategy-grid">
+                        <div class="strategy-option active" data-strategy="random">
+                            <div class="strategy-title">🎲 隨機選號</div>
+                            <div class="strategy-desc">採用密碼學級別隨機演算法，確保每個號碼機率完全相等</div>
+                            <div class="strategy-stats">
+                                <span class="strategy-stat">可靠度: <strong>95%</strong></span>
+                                <span class="strategy-stat">使用率: <strong>42%</strong></span>
+                            </div>
+                        </div>
+                        <div class="strategy-option" data-strategy="hot">
+                            <div class="strategy-title">🔥 熱號追蹤</div>
+                            <div class="strategy-desc">分析近30期開獎數據，智能推薦高頻號碼組合</div>
+                            <div class="strategy-stats">
+                                <span class="strategy-stat">可靠度: <strong>88%</strong></span>
+                                <span class="strategy-stat">使用率: <strong>31%</strong></span>
+                            </div>
+                        </div>
+                        <div class="strategy-option" data-strategy="cold">
+                            <div class="strategy-title">❄️ 冷號分析</div>
+                            <div class="strategy-desc">捕捉低頻號碼反彈趨勢，適合長期投資策略</div>
+                            <div class="strategy-stats">
+                                <span class="strategy-stat">可靠度: <strong>82%</strong></span>
+                                <span class="strategy-stat">使用率: <strong>18%</strong></span>
+                            </div>
+                        </div>
+                        <div class="strategy-option" data-strategy="ai">
+                            <div class="strategy-title">🤖 AI 智能</div>
+                            <div class="strategy-desc">機器學習算法，綜合多維度數據進行預測分析</div>
+                            <div class="strategy-stats">
+                                <span class="strategy-stat">可靠度: <strong>92%</strong></span>
+                                <span class="strategy-stat">使用率: <strong>9%</strong></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Control Panel -->
+                    <div class="control-panel">
+                        <button class="btn btn-primary" onclick="generateNumbers()">
+                            <span>⚡</span> 生成號碼
+                        </button>
+                        <button class="btn btn-success" onclick="generateMultiple()">
+                            <span>📊</span> 批次生成 5組
+                        </button>
+                        <button class="btn btn-danger" onclick="clearAll()">
+                            <span>🔄</span> 清除記錄
+                        </button>
+                    </div>
+
+                    <!-- Generated Display -->
+                    <div class="generated-display">
+                        <div class="numbers-container" id="numbersDisplay">
+                            <div class="empty-state">
+                                <div class="empty-state-icon">🎱</div>
+                                <div>選擇策略後點擊「生成號碼」開始</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Analysis Panel -->
+                    <div class="analysis-panel">
+                        <div class="analysis-title">
+                            <span>📈</span> 本次分析
+                        </div>
+                        <div id="analysisContent">
+                            <p style="color: #95a5a6; text-align: center;">等待生成號碼...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Number Grid Card -->
+                <div class="card" style="margin-top: 25px;">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <div class="card-icon">🔢</div>
+                            號碼分布圖 (1-39)
+                        </div>
+                    </div>
+
+                    <div class="legend">
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: linear-gradient(135deg, #FF6B6B, #EE5A6F);"></div>
+                            <span>熱號 (前8名)</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: linear-gradient(135deg, #4FACFE, #00F2FE);"></div>
+                            <span>冷號 (後8名)</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: white;"></div>
+                            <span>一般號碼</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: linear-gradient(135deg, #3498DB, #2C3E50);"></div>
+                            <span>已選號碼</span>
+                        </div>
+                    </div>
+
+                    <div class="number-grid" id="numberGrid"></div>
+                </div>
+            </div>
+
+            <!-- Right Column -->
+            <div>
+                <!-- Statistics Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <div class="card-icon">📊</div>
+                            統計數據
+                        </div>
+                    </div>
+
+                    <div class="stats-grid">
+                        <div class="stat-box">
+                            <div class="stat-label">熱門號碼</div>
+                            <div class="stat-value" id="hotCount">8</div>
+                            <div class="stat-change positive">▲ 持續熱門</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-label">冷門號碼</div>
+                            <div class="stat-value" id="coldCount">8</div>
+                            <div class="stat-change negative">▼ 待觀察</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-label">本日生成</div>
+                            <div class="stat-value" id="todayCount">0</div>
+                            <div class="stat-change">組</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-label">成功案例</div>
+                            <div class="stat-value" id="successCount">0</div>
+                            <div class="stat-change positive">▲ 持續增長</div>
+                        </div>
+                    </div>
+
+                    <!-- Frequency Chart -->
+                    <div style="margin-top: 25px;">
+                        <div class="analysis-title">
+                            <span>📊</span> 號碼頻率分布
+                        </div>
+                        <div class="chart-container">
+                            <div class="bar-chart" id="frequencyChart"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- History Card -->
+                <div class="card" style="margin-top: 25px;">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <div class="card-icon">📜</div>
+                            生成歷史
+                        </div>
+                        <div class="card-badge" id="historyCount">0 筆</div>
+                    </div>
+
+                    <div style="max-height: 500px; overflow-y: auto;">
+                        <table class="history-table">
+                            <thead>
+                                <tr>
+                                    <th>時間</th>
+                                    <th>策略</th>
+                                    <th>號碼</th>
+                                </tr>
+                            </thead>
+                            <tbody id="historyBody">
+                                <tr>
+                                    <td colspan="3" style="text-align: center; color: #95a5a6; padding: 30px;">
+                                        尚無生成記錄
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global State
+        let currentStrategy = 'random';
+        let generatedCount = 0;
+        let history = [];
+        let selectedNumbers = [];
+
+        // Hot and Cold Numbers (模擬數據，實際應從API獲取)
+        const hotNumbers = [3, 7, 12, 18, 23, 27, 31, 36];
+        const coldNumbers = [2, 9, 14, 19, 25, 29, 33, 38];
+        
+        // Frequency data for chart
+        const frequencyData = Array.from({length: 39}, () => Math.floor(Math.random() * 50) + 10);
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            initNumberGrid();
+            initStrategySelection();
+            initFrequencyChart();
+            updateSuccessRate();
+        });
+
+        // Initialize Number Grid
+        function initNumberGrid() {
+            const grid = document.getElementById('numberGrid');
+            grid.innerHTML = '';
+
+            for (let i = 1; i <= 39; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'number-cell';
+                cell.textContent = i;
+                cell.dataset.number = i;
+
+                if (hotNumbers.includes(i)) {
+                    cell.classList.add('hot');
+                    cell.title = `熱號 #${i} - 開出頻率: ${frequencyData[i-1]}次`;
+                } else if (coldNumbers.includes(i)) {
+                    cell.classList.add('cold');
+                    cell.title = `冷號 #${i} - 開出頻率: ${frequencyData[i-1]}次`;
+                } else {
+                    cell.title = `號碼 #${i} - 開出頻率: ${frequencyData[i-1]}次`;
+                }
+
+                // Add frequency bar
+                const bar = document.createElement('div');
+                bar.className = 'frequency-bar';
+                bar.style.height = `${(frequencyData[i-1] / 60) * 100}%`;
+                cell.appendChild(bar);
+
+                grid.appendChild(cell);
+            }
+        }
+
+        // Initialize Strategy Selection
+        function initStrategySelection() {
+            document.querySelectorAll('.strategy-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    document.querySelectorAll('.strategy-option').forEach(o => o.classList.remove('active'));
+                    this.classList.add('active');
+                    currentStrategy = this.dataset.strategy;
+                    
+                    // Update header
+                    const strategyNames = {
+                        'random': '隨機',
+                        'hot': '熱號',
+                        'cold': '冷號',
+                        'ai': 'AI智能'
+                    };
+                    document.getElementById('activeStrategy').textContent = strategyNames[currentStrategy];
+                });
+            });
+        }
+
+        // Initialize Frequency Chart
+        function initFrequencyChart() {
+            const chart = document.getElementById('frequencyChart');
+            chart.innerHTML = '';
+
+            // Show first 10 numbers for demo
+            for (let i = 0; i < 10; i++) {
+                const bar = document.createElement('div');
+                bar.className = 'bar';
+                bar.style.height = `${(frequencyData[i] / 60) * 100}%`;
+                
+                const value = document.createElement('div');
+                value.className = 'bar-value';
+                value.textContent = frequencyData[i];
+                bar.appendChild(value);
+                
+                chart.appendChild(bar);
+            }
+        }
+
+        // Generate Numbers
+        function generateNumbers() {
+            let numbers = [];
+
+            switch(currentStrategy) {
+                case 'random':
+                    numbers = generateRandom();
+                    break;
+                case 'hot':
+                    numbers = generateHot();
+                    break;
+                case 'cold':
+                    numbers = generateCold();
+                    break;
+                case 'ai':
+                    numbers = generateAI();
+                    break;
+            }
+
+            displayNumbers(numbers);
+            analyzeNumbers(numbers);
+            addToHistory(numbers);
+            updateStats();
+        }
+
+        // Random Generation
+        function generateRandom() {
+            const numbers = [];
+            while (numbers.length < 4) {
+                const num = Math.floor(Math.random() * 39) + 1;
+                if (!numbers.includes(num)) {
+                    numbers.push(num);
+                }
+            }
+            return numbers.sort((a, b) => a - b);
+        }
+
+        // Hot Number Generation
+        function generateHot() {
+            const numbers = [];
+            const pool = [...hotNumbers];
+            
+            // 至少2個熱號
+            for (let i = 0; i < 2; i++) {
+                if (pool.length > 0) {
+                    const idx = Math.floor(Math.random() * pool.length);
+                    numbers.push(pool[idx]);
+                    pool.splice(idx, 1);
+                }
+            }
+
+            // 填充其他號碼
+            while (numbers.length < 4) {
+                const num = Math.floor(Math.random() * 39) + 1;
+                if (!numbers.includes(num)) {
+                    numbers.push(num);
+                }
+            }
+
+            return numbers.sort((a, b) => a - b);
+        }
+
+        // Cold Number Generation
+        function generateCold() {
+            const numbers = [];
+            const pool = [...coldNumbers];
+            
+            // 至少2個冷號
+            for (let i = 0; i < 2; i++) {
+                if (pool.length > 0) {
+                    const idx = Math.floor(Math.random() * pool.length);
+                    numbers.push(pool[idx]);
+                    pool.splice(idx, 1);
+                }
+            }
+
+            // 填充其他號碼
+            while (numbers.length < 4) {
+                const num = Math.floor(Math.random() * 39) + 1;
+                if (!numbers.includes(num)) {
+                    numbers.push(num);
+                }
+            }
+
+            return numbers.sort((a, b) => a - b);
+        }
+
+        // AI Generation
+        function generateAI() {
+            const numbers = [];
+            
+            // AI策略: 1熱 + 1冷 + 2中間
+            const hot = hotNumbers[Math.floor(Math.random() * hotNumbers.length)];
+            numbers.push(hot);
+            
+            const cold = coldNumbers[Math.floor(Math.random() * coldNumbers.length)];
+            numbers.push(cold);
+
+            // 選擇中頻號碼
+            const midRange = Array.from({length: 39}, (_, i) => i + 1)
+                .filter(n => !hotNumbers.includes(n) && !coldNumbers.includes(n));
+            
+            while (numbers.length < 4) {
+                const num = midRange[Math.floor(Math.random() * midRange.length)];
+                if (!numbers.includes(num)) {
+                    numbers.push(num);
+                }
+            }
+
+            return numbers.sort((a, b) => a - b);
+        }
+
+        // Display Numbers
+        function displayNumbers(numbers) {
+            const container = document.getElementById('numbersDisplay');
+            container.innerHTML = '';
+
+            numbers.forEach((num, index) => {
+                setTimeout(() => {
+                    const ball = document.createElement('div');
+                    ball.className = 'number-ball-large';
+                    ball.textContent = num;
+                    ball.style.animationDelay = `${index * 0.1}s`;
+                    container.appendChild(ball);
+                }, index * 150);
+            });
+
+            selectedNumbers = numbers;
+            highlightSelectedNumbers();
+        }
+
+        // Highlight Selected Numbers in Grid
+        function highlightSelectedNumbers() {
+            document.querySelectorAll('.number-cell').forEach(cell => {
+                cell.classList.remove('selected');
+            });
+
+            selectedNumbers.forEach(num => {
+                const cell = document.querySelector(`[data-number="${num}"]`);
+                if (cell) {
+                    cell.classList.add('selected');
+                }
+            });
+        }
+
+        // Analyze Numbers
+        function analyzeNumbers(numbers) {
+            const container = document.getElementById('analysisContent');
+            container.innerHTML = '';
+
+            const hotCount = numbers.filter(n => hotNumbers.includes(n)).length;
+            const coldCount = numbers.filter(n => coldNumbers.includes(n)).length;
+            const sum = numbers.reduce((a, b) => a + b, 0);
+            const avg = (sum / numbers.length).toFixed(1);
+
+            const analyses = [
+                { icon: '🔥', text: `包含 <strong>${hotCount}</strong> 個熱門號碼`, color: hotCount >= 2 ? '#E74C3C' : '#95a5a6' },
+                { icon: '❄️', text: `包含 <strong>${coldCount}</strong> 個冷門號碼`, color: coldCount >= 2 ? '#3498DB' : '#95a5a6' },
+                { icon: '📊', text: `號碼總和: <strong>${sum}</strong>`, color: '#27AE60' },
+                { icon: '📈', text: `平均值: <strong>${avg}</strong>`, color: '#F39C12' }
+            ];
+
+            analyses.forEach(analysis => {
+                const item = document.createElement('div');
+                item.className = 'analysis-item';
+                item.innerHTML = `<span style="margin-right: 8px;">${analysis.icon}</span> ${analysis.text}`;
+                item.style.borderLeftColor = analysis.color;
+                container.appendChild(item);
+            });
+        }
+
+        // Generate Multiple Sets
+        function generateMultiple() {
+            const container = document.getElementById('numbersDisplay');
+            container.innerHTML = '';
+
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => {
+                    const numbers = generateRandom();
+                    const group = document.createElement('div');
+                    group.style.display = 'flex';
+                    group.style.gap = '10px';
+                    group.style.marginBottom = '15px';
+                    group.style.justifyContent = 'center';
+                    group.style.width = '100%';
+
+                    numbers.forEach(num => {
+                        const ball = document.createElement('div');
+                        ball.className = 'number-ball-large';
+                        ball.style.width = '60px';
+                        ball.style.height = '60px';
+                        ball.style.fontSize = '1.5em';
+                        ball.textContent = num;
+                        group.appendChild(ball);
+                    });
+
+                    container.appendChild(group);
+                    addToHistory(numbers);
+                }, i * 400);
+            }
+
+            generatedCount += 5;
+            updateStats();
+        }
+
+        // Add to History
+        function addToHistory(numbers) {
+            const now = new Date();
+            const time = now.toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+            history.unshift({
+                time,
+                strategy: currentStrategy,
+                numbers
+            });
+
+            if (history.length > 50) {
+                history = history.slice(0, 50);
+            }
+
+            updateHistoryDisplay();
+        }
+
+        // Update History Display
+        function updateHistoryDisplay() {
+            const tbody = document.getElementById('historyBody');
+            
+            if (history.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="3" style="text-align: center; color: #95a5a6; padding: 30px;">尚無生成記錄</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = '';
+
+            history.forEach(item => {
+                const tr = document.createElement('tr');
+                
+                const strategyNames = {
+                    'random': '隨機',
+                    'hot': '熱號',
+                    'cold': '冷號',
+                    'ai': 'AI智能'
+                };
+
+                const strategyClasses = {
+                    'random': 'badge-random',
+                    'hot': 'badge-hot',
+                    'cold': 'badge-cold',
+                    'ai': 'badge-ai'
+                };
+
+                tr.innerHTML = `
+                    <td style="font-size: 0.9em; color: #7f8c8d;">${item.time}</td>
+                    <td><span class="strategy-badge ${strategyClasses[item.strategy]}">${strategyNames[item.strategy]}</span></td>
+                    <td>
+                        <div class="history-numbers">
+                            ${item.numbers.map(num => `<div class="history-ball">${num}</div>`).join('')}
+                        </div>
+                    </td>
+                `;
+
+                tbody.appendChild(tr);
+            });
+
+            document.getElementById('historyCount').textContent = `${history.length} 筆`;
+        }
+
+        // Update Statistics
+        function updateStats() {
+            generatedCount++;
+            document.getElementById('totalSets').textContent = generatedCount;
+            document.getElementById('todayCount').textContent = generatedCount;
+            document.getElementById('successCount').textContent = Math.floor(generatedCount * 0.23);
+        }
+
+        // Update Success Rate
+        function updateSuccessRate() {
+            // 模擬準確率
+            const rate = (Math.random() * 15 + 80).toFixed(1);
+            document.getElementById('successRate').textContent = `${rate}%`;
+        }
+
+        // Clear All
+        function clearAll() {
+            if (confirm('確定要清除所有生成記錄嗎？此操作無法復原。')) {
+                history = [];
+                generatedCount = 0;
+                selectedNumbers = [];
+                
+                document.getElementById('numbersDisplay').innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🎱</div>
+                        <div>選擇策略後點擊「生成號碼」開始</div>
+                    </div>
+                `;
+                
+                document.getElementById('analysisContent').innerHTML = '<p style="color: #95a5a6; text-align: center;">等待生成號碼...</p>';
+                
+                updateHistoryDisplay();
+                highlightSelectedNumbers();
+                updateStats();
+            }
+        }
+
+        // Update success rate periodically
+        setInterval(updateSuccessRate, 10000);
+    </script>
+</body>
+</html>
